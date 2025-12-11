@@ -1,0 +1,76 @@
+# Solve for positive integer y given x as divisors of 12n(36n^3 - 19)
+# Equation: x^2 - (36n^2 + y)*x + 12n(36n^3 - 19) = 0
+
+# Import divisors function to avoid naming conflicts
+from sage.arith.misc import divisors as get_divisors
+
+n = 34
+
+# Calculate the constant term
+c = 12*n*(36*n^3 - 19)
+print(f"n = {n}")
+print(f"c = 12n(36n^3 - 19) = {c}")
+print()
+
+# Get all positive divisors of c
+div_list = get_divisors(c)
+print(f"Number of divisors: {len(div_list)}")
+print()
+
+# For each divisor x, solve for y
+# From the equation: x^2 - (36n^2 + y)*x + c = 0
+# Rearranging: y = x - 36n^2 + c/x
+
+a_coeff = 36*n^2
+print(f"36n^2 = {a_coeff}")
+print()
+
+solutions = []
+
+for x in div_list:
+    # Since x divides c, we know c/x is an integer
+    # y = x - 36n^2 + c/x
+    y = x - a_coeff + c//x
+    
+    # Check if y is positive
+    if y > 0:
+        # Verify the solution
+        lhs = x^2 - (a_coeff + y)*x + c
+        solutions.append((x, y, lhs))
+
+print("="*70)
+print(f"Positive integer solutions (x, y):")
+print("="*70)
+print(f"{'x':<15} {'y':<15} {'Verification':<20}")
+print("-"*70)
+
+for x, y, verify in solutions:
+    status = "✓ Correct" if verify == 0 else f"✗ Error: {verify}"
+    print(f"{x:<15} {y:<15} {status:<20}")
+
+print("="*70)
+print(f"\nTotal positive solutions: {len(solutions)}")
+
+# Show statistics
+if solutions:
+    y_values = [y for x, y, _ in solutions]
+    print(f"\nStatistics:")
+    print(f"  Minimum y: {min(y_values)}")
+    print(f"  Maximum y: {max(y_values)}")
+    print(f"  x ranges from {solutions[0][0]} to {solutions[-1][0]}")
+
+# Show first and last few solutions in detail
+print("\n" + "="*70)
+print("First 5 solutions:")
+print("="*70)
+for i, (x, y, _) in enumerate(solutions[:5], 1):
+    print(f"\nSolution {i}: x = {x}, y = {y}")
+    print(f"  Verification: {x}^2 - ({a_coeff} + {y})*{x} + {c} = {x^2 - (a_coeff + y)*x + c}")
+
+if len(solutions) > 5:
+    print("\n" + "="*70)
+    print("Last 5 solutions:")
+    print("="*70)
+    for i, (x, y, _) in enumerate(solutions[-5:], len(solutions)-4):
+        print(f"\nSolution {i}: x = {x}, y = {y}")
+        print(f"  Verification: {x}^2 - ({a_coeff} + {y})*{x} + {c} = {x^2 - (a_coeff + y)*x + c}")
